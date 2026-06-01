@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/../../init.php';
+require_once '../../vendor/autoload.php';
 require_once 'make_1c_file.php';
+
 
 
 /*****************************************************************************************************************
@@ -30,11 +32,12 @@ $dop_days_query =  $_GET['dop_days_query'];
  ******  Формируем пути для файлов
  ******************************************************************************************************************/
 $start_file_path = "../../!all_razbor/ozon/";
-$path_excel_docs = $start_file_path.$now_date_razbora."/".$number_order."/excel_docs";
+$path_temp_docs = $start_file_path.$now_date_razbora."/".$number_order."/temp_docs";
 $path_etiketki = $start_file_path.$now_date_razbora."/".$number_order."/etiketki";
 
+// echo "$path_excel_docs";
 
-$file_name_OTLADKA = $path_excel_docs."/otladka.txt";
+$file_name_OTLADKA = $path_temp_docs."/otladka.txt";
 $startTime = microtime(true);
 $text_otladka = $startTime." ".""."*************************** Перешли в файл ожидания "."\n";
 file_put_contents($file_name_OTLADKA, $text_otladka, FILE_APPEND);
@@ -42,10 +45,14 @@ file_put_contents($file_name_OTLADKA, $text_otladka, FILE_APPEND);
 /*****************************************************************************************************************
  ******  Берем данные из ДЖЕСОН файла
  ******************************************************************************************************************/
-$temp_path_all_order = $path_excel_docs."/".$number_order ."_json_order_for_razbor.json";
-$res = json_decode(file_get_contents($temp_path_all_order),true);
+$temp_path_all_order = $path_temp_docs."/".$number_order ."_json_order_for_razbor.json";
+$orders_for_razbor = json_decode(file_get_contents($temp_path_all_order),true);
 
 
+echo "<pre>";
+// echo "<br> СЧИТАЛИ МАССИВ ДЛЯ ПЕРЕБОРА";
+// print_r($orders_for_razbor);
+// echo "<br> СЧИТАЛИ МАССИВ ДЛЯ ПЕРЕБОРА КОНЕЦ";
 /*****************************************************************************************************************
  ******  Уходим на формирование этикетоук
  ******************************************************************************************************************/
@@ -55,6 +62,6 @@ $text_otladka = $startTime." "."Уходим в файл makeer_etikets "."\n";
 file_put_contents($file_name_OTLADKA, $text_otladka, FILE_APPEND);
 
 
-
+// die('DIE__make_etikets_for_need_zakaz');
 
 require_once "make_etikets_for_need_zakaz.php";

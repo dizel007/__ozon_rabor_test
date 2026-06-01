@@ -65,7 +65,7 @@ return $res;
     
     // формируем массив для каждой позиции товара
     foreach ($one_post_arr_for_zakaz['products'] as $key => $products) {
-    
+
         for ($i=0; $i < $products['quantity']; $i++) {
                  $product = array(
                     "products" => array(
@@ -76,26 +76,31 @@ return $res;
                     )
                 );
                 // Готовим лист подбора
-                $new_arr_list_podbora[$key][]= array ("sky" => $products['sku'] , "name" => $products['name'] , "quantity" => 1);
+                $new_arr_list_podbora[$posting_number][]= array ("sky" => $products['sku'] , "name" => $products['name'] , "quantity" => 1);
                  // готовим данные для разбивки заказа по отправлениям
                 $send_data_arr['packages'][] =  $product;
         }
     }
     
-    // echo "<pre>";
-    // print_r($send_data_arr);
-    // echo "<pre>";
+    print_r($send_data_arr);
+    echo "<br>";
+
     $res['list_podbora'] = $new_arr_list_podbora;
     // echo "<br>***********************************************************************************<br>";
     
     // die('make_new_ZAAKZ_DIE');
     
     $send_data_arr_js = json_encode($send_data_arr);
+
+    echo "<br>********************** send_data_arr_js *************************************************************<br>";
+    print_r($send_data_arr_js);
+    echo "<br>";
+
+
     $ozon_dop_url = "v4/posting/fbs/ship";
     
     ///////        НЕПОСРЕДСТВЕННЫЙ ЗАПУСК ИНЪЕКЦИИ НА САЙТЕ ОЗОН (перевод заказа в собранный)
     /* раскоментировать для работы */
-    
     $res['obmen'] = send_injection_on_ozon($token, $client_id, $send_data_arr_js, $ozon_dop_url );
     return $res;
     };
@@ -109,7 +114,7 @@ return $res;
  * Достаем штрих коды массива заказов (отправления)
  * РАБОЧАЯ ВЕРСИЯ 
  *************************************************************************/
-function get_all_barcodes_for_all_sending ($token, $client_id, $string_etiket, $date_send, $path_etiketki,$wait_time_etikets) {
+function get_all_barcodes_for_all_sending ($token, $client_id, $string_etiket, $pdf_file_name, $path_etiketki,$wait_time_etikets) {
 
     // Данные запроса
     $send_data='
@@ -147,7 +152,7 @@ function get_all_barcodes_for_all_sending ($token, $client_id, $string_etiket, $
 
             
     // НАзвание файла с этикеткой	
-        $file = $date_send.".pdf";
+        $file = $pdf_file_name.".pdf";
     // echo "<br>************** FILE ****************************************************************<br>";
     // print_r($file);
 

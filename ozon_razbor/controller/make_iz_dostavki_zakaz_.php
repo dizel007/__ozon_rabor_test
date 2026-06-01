@@ -109,6 +109,7 @@ $arr_for_zakaz=[];
                     $number_buyer_number_zakaza = implode('-', $firstTwoNumbers);
 
                     $arr_for_zakaz[$number_buyer_number_zakaza]['posting_number'] = $posts['posting_number'];
+                    $arr_for_zakaz[$number_buyer_number_zakaza]['order_number'] = $posts['order_number'];
                     $arr_for_zakaz[$number_buyer_number_zakaza]['shipment_date'] = substr($posts['shipment_date'],0,10);
                     $arr_for_zakaz[$number_buyer_number_zakaza]['products'][$prods['offer_id']]['sku'] = $prods['sku'];
                     $arr_for_zakaz[$number_buyer_number_zakaza]['products'][$prods['offer_id']]['name'] = $prods['name'];
@@ -167,7 +168,7 @@ foreach ($return_rukzak as $article => $selected_orders ) {
 
 // print_r($arr_for_zakaz);
 
-print_r($array_for_rabor);
+// print_r($array_for_rabor);
 echo "<br> *******************************";
 
 echo "коливо элементов = ".count($array_for_rabor)."<br>";
@@ -192,8 +193,8 @@ file_put_contents($file_name_OTLADKA, $text_otladka, FILE_APPEND);
   file_put_contents($temp_path_order_for_razbor, $string_json_order_for_razbor);
 
 
-  die('ddddd');
-die();
+  // die('ddddd');
+
 // если есть Заказы на ОЗОН, то перебираем все отправления по одному и формируем JSON для отправки в ОЗОН
 
 // отсюда начинаем отсчитывавать время выполенния скрипта
@@ -207,8 +208,10 @@ file_put_contents($file_name_OTLADKA, $text_otladka, FILE_APPEND);
 
 set_time_limit(0);
 //// РАзбиваем каждое отправление на единичное отправление и переводим в статус awaiting_deliver
-foreach ($arr_for_zakaz as $one_post) {
-    $result = make_packeges_for_one_post_2($token_ozon, $client_id_ozon, $one_post);
+foreach ($array_for_rabor as $one_post) {
+  echo "<br> ************************ one_post *******************************  ";
+  print_r($one_post);
+    $result[] = make_packeges_for_one_post_2($token_ozon, $client_id_ozon, $one_post);
     usleep(120); // 
 
     $realTime = microtime(true);
@@ -218,6 +221,17 @@ foreach ($arr_for_zakaz as $one_post) {
 }
 
 
+echo "<br>";
+echo "************************** result ПОСЛЕ РАЗБИТИЯ ПО ОТПРАВЛЕНИЯМ **************************************";
+
+print_r($result);
+
+  $string_json_order_for_razbor = json_encode($result, JSON_UNESCAPED_UNICODE);
+  $temp_path_order_for_razbor = $path_excel_docs."/".$number_order ."_json_result_razbivka_po_otpravlenie.json";
+  file_put_contents($temp_path_order_for_razbor, $string_json_order_for_razbor);
+
+
+// die('dddddddddddddddd');
 // было до 28.08.2025
 
 $link_for_make_etikets_for_all ="wait_file.php?ozon_shop=".$ozon_shop.
@@ -228,7 +242,7 @@ $link_for_make_etikets_for_all ="wait_file.php?ozon_shop=".$ozon_shop.
 
 
 
-echo "<script>window.open('$link_for_make_etikets_for_all', '_blank');</script>";
+// echo "<script>window.open('$link_for_make_etikets_for_all', '_blank');</script>";
 
 
  echo <<<HTML
